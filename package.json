@@ -1,0 +1,16 @@
+{
+  "name": "virtual-meet-video-audio",
+  "version": "1.0.0",
+  "description": "Using socket.io as signaling server and communicate between participants using WebRTC (Video and audio communication)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
