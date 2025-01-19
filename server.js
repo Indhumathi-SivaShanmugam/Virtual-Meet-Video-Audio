@@ -6,13 +6,17 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Serve static files (frontend)
+// Track connected users
+let users = [];
+
 app.use(express.static("public"));
 
 io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    // Handle offer
+    users.push(socket.id);
+    io.emit("update-users", users);
+
     socket.on("offer", (data) => {
         socket.to(data.target).emit("offer", {
             sdp: data.sdp,
@@ -20,29 +24,26 @@ io.on("connection", (socket) => {
         });
     });
 
-    // Handle answer
     socket.on("answer", (data) => {
         socket.to(data.target).emit("answer", {
             sdp: data.sdp,
         });
     });
 
-    // Handle ICE candidate
     socket.on("ice-candidate", (data) => {
         socket.to(data.target).emit("ice-candidate", {
             candidate: data.candidate,
         });
     });
 
-    // Handle disconnect
     socket.on("disconnect", () => {
         console.log("User disconnected:", socket.id);
+        users = users.filter((userId) => userId !== socket.id);
+        io.emit("update-users", users);
     });
 });
 
 // Start server
-
-server.listen(3000, "0.0.0.0", () => {
-    console.log("Signaling server is running on http://192.168.1.100:3000");
+server.listen(3000, "localhost", () => {
+    console.log("Signaling server is running on http://localhost:3000");
 });
-

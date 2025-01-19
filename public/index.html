@@ -3,14 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebRTC Audio Call</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <script defer src="script.js"></script>
+    <title>WebRTC Audio Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        audio {
+            margin-top: 20px;
+            width: 300px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 5px 0;
+            cursor: pointer;
+            padding: 8px 12px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        li:hover {
+            background-color: #0056b3;
+        }
+
+        #usersList {
+            margin-top: 20px;
+            max-width: 300px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #usersList h2 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-    <h1>WebRTC Audio Call</h1>
+    <h1>WebRTC Audio Test</h1>
     <button id="startCall">Start Call</button>
     <button id="endCall">End Call</button>
+    
+    <div id="usersList">
+        <h2>Connected Users:</h2>
+        <ul></ul>
+    </div>
+
     <audio id="remoteAudio" controls autoplay></audio>
+
+    <!-- Import Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Import the main script -->
+    <script src="script.js"></script>
 </body>
 </html>
