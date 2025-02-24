@@ -1,54 +1,51 @@
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static('public')); // Serve static files from the 'public' folder
-
-// Store connected users
+// Track connected users
 let users = [];
 
-io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
+app.use(express.static("public"));
 
-    // Add user to the list
+io.on("connection", (socket) => {
+    console.log("A user connected:", socket.id);
+
     users.push(socket.id);
+    io.emit("update-users", users);
 
-    // Handle call offer
-    socket.on('offer', (offer) => {
-        const otherUser = users.find((id) => id !== socket.id);
-        if (otherUser) {
-            socket.to(otherUser).emit('offer', offer);
-        }
+    socket.on("offer", (data) => {
+        socket.to(data.target).emit("offer", {
+            sdp: data.sdp,
+            caller: socket.id,
+        });
     });
 
-    // Handle call answer
-    socket.on('answer', (answer) => {
-        const otherUser = users.find((id) => id !== socket.id);
-        if (otherUser) {
-            socket.to(otherUser).emit('answer', answer);
-        }
+    socket.on("answer", (data) => {
+        socket.to(data.target).emit("answer", {
+            sdp: data.sdp,
+        });
     });
 
-    // Handle ICE candidate exchange
-    socket.on('ice-candidate', (candidate) => {
-        const otherUser = users.find((id) => id !== socket.id);
-        if (otherUser) {
-            socket.to(otherUser).emit('ice-candidate', candidate);
-        }
+    socket.on("ice-candidate", (data) => {
+        socket.to(data.target).emit("ice-candidate", {
+            candidate: data.candidate,
+        });
     });
 
-    // Remove disconnected user
-    socket.on('disconnect', () => {
-        console.log('A user disconnected:', socket.id);
-        users = users.filter((id) => id !== socket.id);
+    socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
+        users = users.filter((userId) => userId !== socket.id);
+        io.emit("update-users", users);
     });
 });
 
-server.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
+// Start server
+server.listen(3000, "localhost", () => {
+    console.log("Signaling server is running on http://localhost:3000");
 });
+
 
